@@ -1,0 +1,5 @@
+check process scale2zero
+  with pidfile /var/vcap/sys/run/scale2zero/scale2zero.pid
+  start program "/var/vcap/jobs/scale2zero/bin/scale2zero_ctl start"
+  stop program "/var/vcap/jobs/scale2zero/bin/scale2zero_ctl stop"
+  group vcap

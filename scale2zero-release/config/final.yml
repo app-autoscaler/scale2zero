@@ -1,0 +1,5 @@
+name: scale2zero
+blobstore:
+  provider: s3
+  options:
+    bucket_name: app-autoscaler-boshrelease

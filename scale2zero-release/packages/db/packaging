@@ -1,0 +1,4 @@
+set -e
+
+cp -R db/* ${BOSH_INSTALL_TARGET}
+

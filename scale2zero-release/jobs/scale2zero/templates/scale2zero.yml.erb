@@ -1,0 +1,78 @@
+<%
+  def p_arr(property)
+    p(property,nil) || []
+  end
+
+  application_db_scheme = p('autoscaler.application_db.db_scheme')
+  application_db_address = p('autoscaler.application_db.address')
+  application_db_port = p('autoscaler.application_db.port')
+  application_db_role = p_arr('autoscaler.application_db.roles').find { |role| role['tag'] == 'application_db' or role['tag'] == 'default'  }
+  application_db_database = p_arr('autoscaler.application_db.databases').find { |database| database['tag'] == 'application_db' or database['tag'] == 'default' }
+  application_db_url = application_db_scheme + "://" + application_db_role['name'] + ":" + application_db_role['password'] + "@" + application_db_address + ":" + application_db_port.to_s + "/" + application_db_database['name'] + "?sslmode=" + p('autoscaler.application_db.sslmode') 
+  unless p('autoscaler.application_db.tls.ca') == ""
+    application_db_url = application_db_url + "&sslrootcert=/var/vcap/jobs/scale2zero/config/certs/application_db/ca.crt"
+  end
+  scalingengine_db_scheme = p('autoscaler.scalingengine_db.db_scheme')
+  scalingengine_db_address = p('autoscaler.scalingengine_db.address')
+  scalingengine_db_port = p('autoscaler.scalingengine_db.port')
+  scalingengine_db_role = p_arr('autoscaler.scalingengine_db.roles').find { |role| role['tag'] == 'scalingengine_db' or role['tag'] == 'default'  }
+  scalingengine_db_database = p_arr('autoscaler.scalingengine_db.databases').find { |database| database['tag'] == 'scalingengine_db' or database['tag'] == 'default' }
+  scalingengine_db_url = scalingengine_db_scheme + "://" + scalingengine_db_role['name'] + ":" + scalingengine_db_role['password'] + "@" + scalingengine_db_address + ":" + scalingengine_db_port.to_s + "/" + scalingengine_db_database['name'] + "?sslmode=" + p('autoscaler.scalingengine_db.sslmode') 
+  unless p('autoscaler.scalingengine_db.tls.ca') == ""
+    scalingengine_db_url = scalingengine_db_url + "&sslrootcert=/var/vcap/jobs/metricsgateway/config/certs/scalingengine_db/ca.crt"
+  end
+
+%>
+
+
+logging:
+  level: <%= p("autoscaler.scale2zero.logging.level") %>
+db:
+  application_db:
+    url: <%= application_db_url %>
+    max_open_connections: <%= p("autoscaler.application_db_connection_config.max_open_connections") %>
+    max_idle_connections: <%= p("autoscaler.application_db_connection_config.max_idle_connections") %>
+    connection_max_lifetime: <%= p("autoscaler.application_db_connection_config.connection_max_lifetime") %>
+  scalingengine_db:
+    url: <%= scalingengine_db_url %>
+    max_open_connections: <%= p("autoscaler.scalingengine_db_connection_config.max_open_connections") %>
+    max_idle_connections: <%= p("autoscaler.scalingengine_db_connection_config.max_idle_connections") %>
+    connection_max_lifetime: <%= p("autoscaler.scalingengine_db_connection_config.connection_max_lifetime") %>
+apiserver:
+  server:
+    port: <%= p("autoscaler.scale2zero.apiserver.server.port") %>
+nozzle:
+  rlp_client_tls:
+    key_file: /var/vcap/jobs/scale2zero/config/certs/reverselogproxy_client/client.key
+    cert_file: /var/vcap/jobs/scale2zero/config/certs/reverselogproxy_client/client.crt
+    ca_file: /var/vcap/jobs/scale2zero/config/certs/reverselogproxy_client/ca.crt
+  rlp_addr: <%= p("autoscaler.scale2zero.nozzle.rlp_addr") %>
+  shard_id: <%= p("autoscaler.scale2zero.nozzle.shard_id") %>
+app_manager:
+  app_refresh_interval: <%= p("autoscaler.scale2zero.app_manager.app_refresh_interval") %>
+route_emitter:
+  flush_interval: <%= p("autoscaler.scale2zero.router_emitter.flush_interval") %>
+route_manager:
+  send_route_interval: <%= p("autoscaler.scale2zero.route_manager.send_route_interval") %>
+  refresh_app_route_interval: <%= p("autoscaler.scale2zero.route_manager.refresh_app_route_interval") %>
+route_listener:
+  ipaddress: <%= spec.ip %>
+  port: <%= p("autoscaler.scale2zero.route_listener.port") %>
+aggregator:
+  evaluation_interval: <%= p("autoscaler.scale2zero.aggregator.evaluation_interval") %>
+  app_refresh_interval: <%= p("autoscaler.scale2zero.aggregator.app_refresh_interval") %>
+scaling_engine:
+  lock_size: <%= p("autoscaler.scale2zero.scaling_engine.lock_size") %>
+cf:
+  api: <%= p("autoscaler.cf.api") %>
+  client_id: <%= p("autoscaler.cf.client_id") %>
+  secret: <%= p("autoscaler.cf.secret") %>
+  routing_api: <%= p("autoscaler.cf.routing_api") %>
+  skip_ssl_validation: <%= p("autoscaler.cf.skip_ssl_validation") %>
+route_chan_size: <%= p("autoscaler.scale2zero.route_chan_size") %>
+envelope_chan_size: <%= p("autoscaler.scale2zero.envelop_chan_size") %>
+trigger_chan_size: <%= p("autoscaler.scale2zero.trigger_chan_size") %>
+nozzle_count: <%= p("autoscaler.scale2zero.nozzle_count") %>
+trigger_worker_count: <%= p("autoscaler.scale2zero.trigger_worker_count") %>
+cool_down_duration: <%= p("autoscaler.scale2zero.cool_down_duration") %>
+

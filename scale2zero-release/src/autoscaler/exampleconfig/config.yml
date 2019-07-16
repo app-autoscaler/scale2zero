@@ -1,0 +1,50 @@
+logging:
+  level: "debug"
+db:
+  application_db:
+    url: "postgres://postgres:123@localhost:5432/autoscaler?sslmode=disable"
+    max_open_connections: 10
+    max_idle_connections: 5
+    connection_max_lifetime: 60s
+  scalingengine_db:
+    url: "postgres://postgres:123@localhost:5432/autoscaler?sslmode=disable"
+    max_open_connections: 10
+    max_idle_connections: 5
+    connection_max_lifetime: 60s
+apiserver:
+  server:
+    port: 8888
+nozzle:
+  rlp_client_tls:
+    key_file: "loggregator_client.cert"
+    cert_file: "loggregator_client.key"
+    ca_file: "autoscaler_ca.cert"
+  rlp_addr: localhost:9999
+  shard_id: autoscaler
+app_manager:
+  refresh_interval: 5s
+route_emitter:
+  flush_interval: 5s
+route_manager:
+  send_route_interval: 5s
+  refresh_app_route_interval: 5s
+route_listener:
+  ipaddress: 127.0.0.1
+  port: 8889
+aggregator:
+  evaluation_interval: 5s
+  app_refresh_interval: 5s
+scaling_engine:
+  lock_size: 5
+cf:
+  api: api.bosh-lite.com
+  client_id: app-autoscaler
+  secret: app-autoscaler-secret
+  routing_api: api.bosh-lite.com/routing
+  skip_ssl_validation: true
+route_chan_size: 500
+envelope_chan_size: 500
+trigger_chan_size: 500
+nozzle_count: 2
+worker_count: 2
+cool_down_duration: 300s
