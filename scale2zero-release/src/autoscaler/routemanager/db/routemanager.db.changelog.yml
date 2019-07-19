@@ -1,0 +1,36 @@
+--- 
+databaseChangeLog:
+   - changeSet:
+      id: 1
+      author: qibobo
+      changes:
+        - createTable:
+            tableName: app_route
+            columns:
+              - column:
+                    name: route
+                    type: varchar(50)
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+              - column:
+                  name: app_id
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ip
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: port
+                  type: varchar(5)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ttl
+                  type: int
+              
+ 
+

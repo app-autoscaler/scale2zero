@@ -1,2 +1,25 @@
 /pkg/
 /bin/
+
+scale2zero-release/config/dev.yml
+scale2zero-release/config/private.yml
+scale2zero-release/releases/*.tgz
+scale2zero-release/releases/**/*.tgz
+scale2zero-release/dev_releases
+scale2zero-release/.blobs
+scale2zero-release/blobs
+scale2zero-release/.dev_builds
+scale2zero-release/.idea
+scale2zero-release/.DS_Store
+scale2zero-release/.final_builds/jobs/**/*.tgz
+scale2zero-release/.final_builds/packages/**/*.tgz
+scale2zero-release/*.swp
+# gosub and friends
+scale2zero-release/src/github.com/vito/gosub
+# lol bet you were looking for this
+scale2zero-release/src/github.com/codegangsta/cli
+
+scale2zero-release/bin/
+scale2zero-release/pkg/
+
+scale2zero-release/bosh-lite/deployments/*

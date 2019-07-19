@@ -1,0 +1,8 @@
+---
+name: java
+
+dependencies:
+
+files:
+- openjdk/openjdk-10.0.1_linux-x64_bin.tar.gz
+- openjdk/openjdk-10.0.1_osx-x64_bin.tar.gz

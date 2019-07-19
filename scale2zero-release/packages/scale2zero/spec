@@ -1,0 +1,16 @@
+---
+name: scale2zero
+
+dependencies:
+- golang
+
+files:
+- autoscaler/**/*
+- code.cloudfoundry.org/**/*
+- github.com/**/*
+- golang.org/**/*
+- google.golang.org/**/*
+- gopkg.in/**/*
+
+
+

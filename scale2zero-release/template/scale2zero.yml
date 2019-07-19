@@ -1,0 +1,167 @@
+---
+
+name: scale2zero
+
+# Release Details
+releases:
+- name: scale2zero
+  version: latest
+- name: "postgres"
+  version: "25"
+  url: "https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=25"
+  sha1: "20929ee4b0c64fd97072a266311a6d00714124a7"
+- name: bosh-dns-aliases
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh-dns-aliases-release?v=0.0.3
+  version: '0.0.3'
+  sha1: b0d0a0350ed87f1ded58b2ebb469acea0e026ccc
+- name: routing
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.162.0
+  sha1: f17cf09d2414f5f486d18bbd57b17fd48fb69773
+  version: '0.162.0'
+addons:
+- name: bosh-dns-aliases
+  include:
+    stemcell:
+    - os: ubuntu-xenial
+  jobs:
+  - name: bosh-dns-aliases
+    release: bosh-dns-aliases
+    properties:
+      aliases:
+      - domain: scale2zeropostgres.service.cf.internal
+        targets:
+        - query: '*'
+          instance_group: scale2zeropostgres
+          deployment: scale2zero
+          network: default
+          domain: bosh
+      - domain: reverse-log-proxy.service.cf.internal
+        targets:
+        - query: '*'
+          instance_group: log-api
+          deployment: cf
+          network: default
+          domain: bosh
+# Stemcell details
+stemcells:
+- alias: default
+  os: ubuntu-xenial
+  version: latest
+
+# Canary details
+update:
+  canaries: 1
+  canary_watch_time: 1000-300000
+  max_in_flight: 1
+  update_watch_time: 1000-300000
+
+# Instance Group details
+instance_groups:
+  # Postgres Instance Group
+- name: scale2zeropostgres
+  azs:
+  - z1
+  instances: 1
+  update:
+    serial: true
+  stemcell: default
+  vm_type: small
+  networks:
+  - name: default
+  jobs:
+  - name: postgres
+    release: postgres
+    properties:
+      databases: &database
+        databases:
+        - name: autoscaler
+          tag: default
+        db_scheme: postgres
+        port: 5432
+        roles:
+        - name: postgres
+          password: "((database_password))"
+          tag: default
+        connection_config: &databaseConnectionConfig
+          max_open_connections: 100
+          max_idle_connections: 10
+          connection_max_lifetime: 60s
+- name: scale2zero
+  azs:
+  - z1
+  instances: 1
+  networks:
+  - name: default
+  stemcell: default
+  vm_type: minimal
+  update:
+    max_in_flight: 1
+    serial: true
+  jobs:
+  - name: scale2zero
+    release: scale2zero
+    properties:
+      autoscaler:
+        scalingengine_db: *database
+        application_db: *database
+        scalingengine_db_connection_config: *databaseConnectionConfig
+        application_db_connection_config: *databaseConnectionConfig
+        cf:
+          api: "https://api.((system_domain))"
+          routing_api: "https://api.((system_domain))/routing"
+          client_id: "((cf_client_id))"
+          secret: "((cf_client_secret))"
+          skip_ssl_validation: "((skip_ssl_validation))"
+        scale2zero:
+          logging:
+            level: debug
+          apiserver:
+            server:
+              port: &publicApiServerPort 8001 
+          nozzle:
+            rlp_addr: "reverse-log-proxy.service.cf.internal:8082"
+            shard_id: "CF_AUTOSCALER_SCALE2ZERO"
+            loggregator_rlp_tls:
+              cert: ((loggregator_tls_rlp.certificate))
+              key: ((loggregator_tls_rlp.private_key))
+              ca_cert: ((loggregator_ca.certificate))
+          app_manager:
+            app_refresh_interval: 60s
+          route_emitter:
+            flush_interval: 5s
+          route_manager:
+            send_route_interval: 5s
+            refresh_app_route_interval: 10s
+          route_listener:
+            port: 8002
+          aggregator:
+            evaluation_interval: 5s
+            app_refresh_interval: 5s
+          scaling_engine:
+            lock_size: 5
+          route_chan_size: 500
+          envelope_chan_size: 500
+          trigger_chan_size: 500
+          nozzle_count: 1
+          trigger_worker_count: 1
+          cool_down_duration: 300s
+  - name: route_registrar
+    release: routing
+    consumes:
+      nats: {from: nats, deployment: cf}
+    properties:
+      route_registrar:
+        routes:
+        - name: scale2zero_public_api
+          registration_interval: 20s
+          port: *publicApiServerPort
+          tags:
+            component: scale2zero_api_server
+          uris:
+            - autoscaler2zero.((system_domain))   
+
+
+variables:
+- name: database_password
+  type: password
+

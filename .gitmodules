@@ -1,24 +1,64 @@
-[submodule "src/github.com/cloudfoundry-community/go-cfclient"]
-	path = src/github.com/cloudfoundry-community/go-cfclient
-	url = https://github.com/cloudfoundry-community/go-cfclient.git
-[submodule "src/code.cloudfoundry.org/lager"]
-	path = src/code.cloudfoundry.org/lager
+[submodule "scale2zero-release/src/github.com/cloudfoundry-community/go-cfclient"]
+	path = scale2zero-release/src/github.com/cloudfoundry-community/go-cfclient
+	url = https://github.com/cloudfoundry-community/go-cfclient
+[submodule "scale2zero-release/src/code.cloudfoundry.org/lager"]
+	path = scale2zero-release/src/code.cloudfoundry.org/lager
 	url = https://github.com/cloudfoundry/lager
-[submodule "src/github.com/pkg/errors"]
-	path = src/github.com/pkg/errors
+[submodule "scale2zero-release/src/github.com/pkg/errors"]
+	path = scale2zero-release/src/github.com/pkg/errors
 	url = https://github.com/pkg/errors
-[submodule "src/code.cloudfoundry.org/gofileutils"]
-	path = src/code.cloudfoundry.org/gofileutils
+[submodule "scale2zero-release/src/code.cloudfoundry.org/gofileutils"]
+	path = scale2zero-release/src/code.cloudfoundry.org/gofileutils
 	url = https://github.com/cloudfoundry/gofileutils
-[submodule "src/golang.org/x/net"]
-	path = src/golang.org/x/net
-	url = https://github.com/golang/net/
-[submodule "src/golang.org/x/oauth2"]
-	path = src/golang.org/x/oauth2
-	url = https://github.com/golang/oauth2/
-[submodule "src/github.com/Masterminds/semver"]
-	path = src/github.com/Masterminds/semver
+[submodule "scale2zero-release/src/golang.org/x/net"]
+	path = scale2zero-release/src/golang.org/x/net
+	url = https://github.com/golang/net
+[submodule "scale2zero-release/src/golang.org/x/oauth2"]
+	path = scale2zero-release/src/golang.org/x/oauth2
+	url = https://github.com/golang/oauth2
+[submodule "scale2zero-release/src/github.com/Masterminds/semver"]
+	path = scale2zero-release/src/github.com/Masterminds/semver
 	url = https://github.com/Masterminds/semver
-[submodule "src/code.cloudfoundry.org/cfhttp"]
-	path = src/code.cloudfoundry.org/cfhttp
+[submodule "scale2zero-release/src/code.cloudfoundry.org/cfhttp"]
+	path = scale2zero-release/src/code.cloudfoundry.org/cfhttp
 	url = https://github.com/cloudfoundry/cfhttp
+[submodule "scale2zero-release/src/code.cloudfoundry.org/clock"]
+	path = scale2zero-release/src/code.cloudfoundry.org/clock
+	url = https://github.com/cloudfoundry/clock.git
+[submodule "scale2zero-release/src/github.com/lib/pq"]
+	path = scale2zero-release/src/github.com/lib/pq
+	url = https://github.com/lib/pq.git
+[submodule "scale2zero-release/src/github.com/gorilla/mux"]
+	path = scale2zero-release/src/github.com/gorilla/mux
+	url = https://github.com/gorilla/mux.git
+[submodule "scale2zero-release/src/github.com/tedsuo/ifrit"]
+	path = scale2zero-release/src/github.com/tedsuo/ifrit
+	url = https://github.com/tedsuo/ifrit.git
+[submodule "scale2zero-release/src/code.cloudfoundry.org/go-loggregator"]
+	path = scale2zero-release/src/code.cloudfoundry.org/go-loggregator
+	url = https://github.com/cloudfoundry/go-loggregator
+[submodule "scale2zero-release/src/google.golang.org/grpc"]
+	path = scale2zero-release/src/google.golang.org/grpc
+	url = https://github.com/grpc/grpc-go
+[submodule "scale2zero-release/src/code.cloudfoundry.org/rfc5424"]
+	path = scale2zero-release/src/code.cloudfoundry.org/rfc5424
+	url = https://github.com/cloudfoundry-incubator/rfc5424
+
+[submodule "scale2zero-release/src/github.com/golang/protobuf"]
+	path = scale2zero-release/src/github.com/golang/protobuf
+	url = https://github.com/golang/protobuf
+[submodule "scale2zero-release/src/golang.org/x/text"]
+	path = scale2zero-release/src/golang.org/x/text
+	url = https://go.googlesource.com/text
+[submodule "scale2zero-release/src/google.golang.org/genproto"]
+	path = scale2zero-release/src/google.golang.org/genproto
+	url = https://github.com/google/go-genproto
+[submodule "scale2zero-release/src/code.cloudfoundry.org/go-diodes"]
+	path = scale2zero-release/src/code.cloudfoundry.org/go-diodes
+	url = https://github.com/cloudfoundry/go-diodes
+[submodule "scale2zero-release/src/gopkg.in/yaml.v2"]
+	path = scale2zero-release/src/gopkg.in/yaml.v2
+	url = https://gopkg.in/yaml.v2
+[submodule "scale2zero-release/src/golang.org/x/sys"]
+	path = scale2zero-release/src/golang.org/x/sys
+	url = https://github.com/golang/sys

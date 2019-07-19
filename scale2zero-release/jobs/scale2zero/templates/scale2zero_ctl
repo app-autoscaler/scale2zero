@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -e
+
+JOB_DIR=/var/vcap/jobs/scale2zero
+RUN_DIR=/var/vcap/sys/run/scale2zero
+LOG_DIR=/var/vcap/sys/log/scale2zero
+CONF_DIR=/var/vcap/jobs/scale2zero/config
+HOOK_LOG_OUT=${LOG_DIR}/hooks.stdout.log
+HOOK_LOG_ERR=${LOG_DIR}/hooks.stderr.log
+PIDFILE=$RUN_DIR/scale2zero.pid
+COMMON_DIR=/var/vcap/packages/common
+
+source $COMMON_DIR/utils.sh
+
+case $1 in
+
+  start)
+    pid_guard $PIDFILE "scale2zero"
+
+    ulimit -n 8192
+
+    mkdir -p $RUN_DIR
+    chown -R vcap:vcap $RUN_DIR
+    mkdir -p $LOG_DIR
+    chown -R vcap:vcap $LOG_DIR
+
+    echo $$ > $PIDFILE
+
+    <% unless p("autoscaler.scale2zero.hooks.pre_start").empty? %>
+    $COMMON_DIR/call-hooks.sh "scale2zero" "pre-start"
+    <% end %>
+
+    exec /var/vcap/packages/scale2zero/scale2zero -c $CONF_DIR/scale2zero.yml >>$LOG_DIR/scale2zero.stdout.log 2>>$LOG_DIR/scale2zero.stderr.log
+
+    <% unless p("autoscaler.scale2zero.hooks.post_start").empty? %>
+    $COMMON_DIR/call-hooks.sh "scale2zero" "post-start"
+    <% end %>
+    ;;
+
+  stop)
+
+    <% unless p("autoscaler.scale2zero.hooks.pre_stop").empty? %>
+    $COMMON_DIR/call-hooks.sh "scale2zero" "pre-stop"
+    <% end %>
+
+    kill_and_wait $PIDFILE
+
+    <% unless p("autoscaler.scale2zero.hooks.post_stop").empty? %>
+    $COMMON_DIR/call-hooks.sh "scale2zero" "post-stop"
+    <% end %>
+    ;;
+
+  *)
+  echo "Usage: scale2zero_ctl {start|stop}" ;;
+esac
+exit 0

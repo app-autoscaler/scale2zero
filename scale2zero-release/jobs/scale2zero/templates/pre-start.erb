@@ -1,0 +1,37 @@
+#!/bin/bash 
+
+<%
+def p_arr(property)
+  p(property,nil) || []
+end
+
+role = p_arr('autoscaler.application_db.roles').find { |role| role['tag'] == 'application_db' or role['tag'] == 'default' }
+database = p_arr('autoscaler.application_db.databases').find { |database| database['tag'] == 'application_db' or database['tag'] == 'default' }
+%>
+source /var/vcap/packages/common/dns-helper.sh
+
+export PATH=/var/vcap/packages/java/bin:$PATH 
+
+HOST='<%= p("autoscaler.application_db.address") %>'
+DBNAME='<%= database['name'] %>'
+USER='<%= role['name'] %>'
+PASSWORD='<%= role['password'] %>'
+PORT='<%= p("autoscaler.application_db.port") %>'
+SSLMODE='<%= p("autoscaler.application_db.sslmode") %>'
+DBURI="jdbc:postgresql://$HOST:$PORT/$DBNAME?sslmode=$SSLMODE"
+
+<% unless p('autoscaler.application_db.tls.ca') == "" %>
+DBURI=$DBURI"&sslrootcert=/var/vcap/jobs/metricscollector/config/certs/appapplication_db/ca.crt"
+<% end %>
+
+detect_dns $HOST $PORT
+
+java -cp "/var/vcap/packages/db/target/lib/*" liquibase.integration.commandline.Main --url "$DBURI" --username=$USER --password=$PASSWORD \
+--driver=org.postgresql.Driver --changeLogFile=/var/vcap/packages/scale2zero/api.db.changelog.yml update
+
+java -cp "/var/vcap/packages/db/target/lib/*" liquibase.integration.commandline.Main --url "$DBURI" --username=$USER --password=$PASSWORD \
+--driver=org.postgresql.Driver --changeLogFile=/var/vcap/packages/scale2zero/routemanager.db.changelog.yml update 
+
+java -cp "/var/vcap/packages/db/target/lib/*" liquibase.integration.commandline.Main --url "$DBURI" --username=$USER --password=$PASSWORD \
+--driver=org.postgresql.Driver --changeLogFile=/var/vcap/packages/scale2zero/scalingengine.db.changelog.yml update 
+

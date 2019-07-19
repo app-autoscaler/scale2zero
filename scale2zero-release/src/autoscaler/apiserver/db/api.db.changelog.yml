@@ -1,0 +1,22 @@
+--- 
+databaseChangeLog:
+   - changeSet:
+      id: 1
+      author: qibobo
+      changes:
+        - createTable:
+            tableName: application
+            columns:
+              - column:
+                  name: app_id
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: breach_duration
+                  type: int
+                  constraints:
+                    nullable: false
+ 
+
